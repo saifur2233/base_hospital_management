@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--Doctor dashboard template-->
+<templates id="doc_dashboard" xml:space="preserve">
+    <t t-name="DoctorDashboard" owl="1">
+        <style>
+            .stat-card {
+                background: linear-gradient(135deg, #4ec8e3 0%, #2ba3c8 100%);
+                color: white;
+                padding: 25px;
+                border-radius: 12px;
+                margin-bottom: 20px;
+                cursor: pointer;
+                transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                position: relative;
+                overflow: hidden;
+                box-shadow: 0 5px 15px rgba(43, 163, 200, 0.2);
+                animation: fadeInUp 0.6s ease backwards;
+            }
+
+            .stat-card:nth-child(1) { animation-delay: 0.1s; }
+            .stat-card:nth-child(2) { animation-delay: 0.2s; }
+            .stat-card:nth-child(3) { animation-delay: 0.3s; }
+            .stat-card:nth-child(4) { animation-delay: 0.4s; }
+            .stat-card:nth-child(5) { animation-delay: 0.5s; }
+
+            .stat-card::before {
+                content: '';
+                position: absolute;
+                top: -50%;
+                right: -50%;
+                width: 100%;
+                height: 100%;
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 50%;
+                transition: all 0.6s ease;
+            }
+
+            .stat-card:hover {
+                transform: translateY(-10px) scale(1.02);
+                box-shadow: 0 15px 40px rgba(43, 163, 200, 0.3);
+            }
+
+            .stat-card:hover::before {
+                top: -25%;
+                right: -25%;
+            }
+
+            .stat-card-label {
+                font-size: 30px;
+                font-weight: 600;
+                opacity: 0.95;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .stat-card-value {
+                font-size: 28px;
+                font-weight: 700;
+                margin-top: 10px;
+                position: relative;
+                z-index: 1;
+            }
+
+            .stat-card-icon {
+                position: absolute;
+                right: 20px;
+                top: 20px;
+                font-size: 32px;
+                opacity: 0.3;
+                transition: all 0.3s ease;
+            }
+
+            .stat-card:hover .stat-card-icon {
+                transform: rotate(20deg) scale(1.1);
+                opacity: 0.5;
+            }
+        </style>
+        <div class="oh_dashboards" t-ref="root">
+            <div class="container-fluid o_pj_dashboard">
+                <div style="width:100%; margin:0; padding:0;">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h2 class="h2 fw-bold text-center"
+                                style="
+                                    background: linear-gradient(135deg, #4ec8e3 0%, #2ba3c8 100%);
+                                    -webkit-background-clip: text;
+                                    background-clip: text;
+                                    color: transparent;
+                                    -webkit-text-fill-color: transparent;
+                                    font-size: 40px;
+                                    letter-spacing: 0.5px;
+                                    padding-top: 20px;
+                                    font-weight: bold;
+                                ">
+                                Doctor Dashboard
+                            </h2>
+                        </div>
+
+                        <div class="col-md-12 my-4">
+                            <div class="row d-flex justify-content-center g-4 p-5">
+                                <div class="col-lg-3 col-md-4 col-sm-6">
+                                    <div class="stat-card">
+                                        <div class="stat-card-icon"><i class="fa fa-user-circle"></i></div>
+                                        <div class="stat-card-label" t-on-click="fetch_consultation">Consultation</div>
+                                        <div class="stat-card-value">
+                                            <t t-esc="state.summary.consultation"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-4 col-sm-6">
+                                    <div class="stat-card">
+                                        <div class="stat-card-icon"><i class="fa fa-user-plus"></i></div>
+                                        <div class="stat-card-label" t-on-click="list_patient_data">Patient</div>
+                                        <div class="stat-card-value">
+                                            <t t-esc="state.summary.patient"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-4 col-sm-6">
+                                    <div class="stat-card">
+                                        <div class="stat-card-icon"><i class="fa fa-user-plus"></i></div>
+                                        <div class="stat-card-label" t-on-click="action_list_inpatient">Inpatient</div>
+                                        <div class="stat-card-value">
+                                            <t t-esc="state.summary.inpatient"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-4 col-sm-6">
+                                    <div class="stat-card">
+                                        <div class="stat-card-icon"><i class="fa fa-cutlery"></i></div>
+                                        <div class="stat-card-label" t-on-click="fetch_doctors_schedule">Surgery</div>
+                                        <div class="stat-card-value">
+                                            <t t-esc="state.summary.surgery"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-4 col-sm-6">
+                                    <div class="stat-card">
+                                        <div class="stat-card-icon"><i class="fa fa-calendar"></i></div>
+                                        <div class="stat-card-label" t-on-click="fetch_allocation_lines">Shift Allocation</div>
+                                        <div class="stat-card-value">
+                                            <t t-esc="state.summary.allocation"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <div class="row">
+                        <div class="col-md-2 bg-white r_dashButtonContainer">
+                            <div class="row r_dashButton outpatient_button"
+                                 id="consultation" style="margin-top: 45px;"
+                                t-on-click="fetch_consultation">
+                                Consultation
+                            </div>
+                            <div class="row r_dashButton patient_data"
+                                 id="patient"  t-on-click="list_patient_data">
+                                Patient
+                            </div>
+                            <div class="row r_dashButton inpatient_button"
+                                 id="inpatient" t-on-click="action_list_inpatient">
+                                Inpatient
+                            </div>
+                            <div class="row r_dashButton scheduled_activity"
+                                 id="scheduled_activity" t-on-click="fetch_doctors_schedule">
+                                Surgery
+                            </div>
+                            <div class="row r_dashButton shift" id="shift"
+                            t-on-click="fetch_allocation_lines">
+                                Shift Allocation
+                            </div>
+                        </div>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

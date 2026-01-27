@@ -1,0 +1,939 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--Reception dashboard template-->
+<templates id="reception_dashboard" xml:space="preserve">
+    <t t-name="ReceptionDashboard" owl="1">
+        
+        <div class="oh_dashboards" style="overflow: scroll;height: 100%;"
+             t-ref="root">
+            <div class="container-fluid o_pj_dashboard">
+                <div style="width:100%; margin:0; padding:0;">
+                    
+                    <div class="row">
+                        <div class="col-12 r_dashButtonContainer">
+                            <div id="patient"
+                                 class="col-md-4 r_dashButton o_patient_button"
+                                 t-on-click="createPatient">
+                                <img src="https://cdn-icons-png.flaticon.com/512/1512/1512910.png"
+                                     width="65px" class="patient_img"/>
+                                <p>Patient</p>
+                            </div>
+                            <div id="appointment"
+                                 class="col-md-4 r_dashButton o_appointment_button"
+                                    t-on-click="fetchAppointmentData">
+                                <img src="https://cdn-icons-png.flaticon.com/512/1069/1069152.png"
+                                     width="65px" class="apnmnt_img"/>
+                                <p>Appointment</p>
+                            </div>
+                            <div id="rw"
+                                 class="col-md-4 r_dashButton o_room_ward_button" t-on-click="fetchRoomWard">
+                                <img src="https://cdn-icons-png.flaticon.com/512/2184/2184890.png"
+                                     width="65px" class="room_ward_img"/>
+                                <p>Room/Ward</p>
+                            </div>
+                        </div>
+                        <div id="view_main" class="col-md-6 col-sm-6">
+                            <div id="buttons" class="row r_AppntBtn">
+                                <div class="row rd_buttons" t-ref="rd_buttons">
+                                    <div class="col-lg-6 col-md-6">
+                                        <div id="outpatient" class="col-md-4 r_dashButton o_outpatient_button"
+                                        t-on-click="fetchAppointmentData">
+                                            <img src="base_hospital_management/static/src/img/out_p.png" width="80px" class="out_p_image"/>
+                                            <p>Outpatient</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-md-6">
+                                        <div id="inpatient" class="col-md-4 r_dashButton o_inpatient_button" t-on-click="createInPatient">
+                                            <img src="base_hospital_management/static/src/img/in_p.png" width="80px" class="in_p_img"/>
+                                            <p>Inpatient</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="controls" class="row r_controls"/>
+                                <div id="content" class="col r_Container container">
+                                    <div class="row r_Profile" t-ref="patient_creation">
+                                        <style>
+            .reception-dashboard-container {
+                max-width: 1000px;
+                margin: 0 auto;
+                padding: 0 20px;
+            }
+            
+            .reception-dashboard-container .page-title {
+                text-align: center;
+                margin-bottom: 40px;
+                position: relative;
+            }
+            
+            .reception-dashboard-container .page-title h1 {
+                color: #2ba3c8;
+                font-size: 42px;
+                font-weight: 700;
+                display: inline-block;
+                position: relative;
+                padding-bottom: 15px;
+                transition: all 0.4s ease;
+                cursor: default;
+            }
+            
+            .reception-dashboard-container .page-title h1:hover {
+                transform: translateY(-5px);
+                letter-spacing: 2px;
+            }
+            
+            .page-title h1::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 0;
+                height: 4px;
+                background: linear-gradient(135deg, #4ec8e3 0%, #2ba3c8 100%);
+                border-radius: 2px;
+                transition: width 0.4s ease;
+            }
+            
+            .reception-dashboard-container .page-title h1:hover::after {
+                width: 100%;
+            }
+            
+            .reception-dashboard-container .page-title .title-icon {
+                margin-right: 15px;
+                animation: pulse 2s infinite;
+            }
+            
+            @keyframes pulse {
+                0%, 100% {
+                    transform: scale(1);
+                }
+                50% {
+                    transform: scale(1.1);
+                }
+            }
+            
+            .reception-dashboard-container .form-card {
+                background: #fff;
+                border-radius: 20px;
+                /* box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); */
+                padding: 40px;
+                animation: slideUp 0.6s ease;
+            }
+            
+            @keyframes slideUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            
+            .reception-dashboard-container .form-group {
+                margin-bottom: 25px;
+                position: relative;
+                width: 100% !important;
+            }
+            
+            .reception-dashboard-container .form-group label {
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 8px;
+                display: block;
+                font-size: 14px;
+            }
+            
+            .reception-dashboard-container .form-group label i {
+                margin-right: 8px;
+                color: #2ba3c8;
+                animation: fadeIn 0.5s ease;
+            }
+            
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+            
+            .reception-dashboard-container .input-icon-wrapper {
+                width: 100% !important;
+            }
+            
+            .reception-dashboard-container .input-icon-wrapper i {
+                position: absolute;
+                left: 15px;
+                top: 67%;
+                transform: translateY(-50%);
+                color: #2ba3c8;
+                transition: all 0.3s ease;
+                z-index: 1;
+            }
+            
+            .reception-dashboard-container .input-icon-wrapper input,
+            .reception-dashboard-container .input-icon-wrapper select {
+                padding-left: 45px !important;
+            }
+            
+            .reception-dashboard-container .form-control {
+                width: 100% !important;
+                max-width: 100% !important;
+                display: block !important;
+                box-sizing: border-box !important;
+                height: 50px;
+                border: 2px solid #e0e0e0;
+                border-radius: 10px;
+                font-size: 14px;
+                transition: all 0.3s ease;
+                background: #f8f9fa;
+            }
+            
+            .reception-dashboard-container .form-control:focus {
+                border-color: #4ec8e3;
+                box-shadow: 0 0 0 0.2rem rgba(78, 200, 227, 0.25);
+                background: #fff;
+                outline: none;
+            }
+            
+            .reception-dashboard-container .form-control:focus + i,
+            .reception-dashboard-container .input-icon-wrapper input:focus ~ i {
+                color: #4ec8e3;
+                animation: iconBounce 0.5s ease;
+            }
+            
+            @keyframes iconBounce {
+                0%, 100% {
+                    transform: translateY(-50%) scale(1);
+                }
+                50% {
+                    transform: translateY(-50%) scale(1.2);
+                }
+            }
+            
+            .reception-dashboard-container .file-upload-wrapper {
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .reception-dashboard-container .file-upload-wrapper input[type="file"] {
+                position: absolute;
+                left: -9999px;
+            }
+            
+            .reception-dashboard-container .file-upload-label {
+                display: block;
+                padding: 12px 20px;
+                background: linear-gradient(135deg, #4ec8e3 0%, #2ba3c8 100%);
+                color: #fff;
+                border-radius: 10px;
+                cursor: pointer;
+                text-align: center;
+                transition: all 0.3s ease;
+                border: none;
+            }
+            
+            .reception-dashboard-container .file-upload-label:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(43, 163, 200, 0.4);
+            }
+            
+            .reception-dashboard-container .file-upload-label i {
+                margin-right: 8px;
+            }
+            
+            .reception-dashboard-container .radio-group,
+            .reception-dashboard-container .checkbox-group {
+                display: flex;
+                gap: 20px;
+                margin-top: 10px;
+                flex-wrap: wrap;
+            }
+
+            .reception-dashboard-container .radio-item,
+            .reception-dashboard-container .checkbox-item {
+                position: relative;
+                cursor: pointer;
+            }
+            
+            .reception-dashboard-container .radio-item input[type="radio"],
+            .reception-dashboard-container .checkbox-item input[type="checkbox"] {
+                position: absolute;
+                opacity: 0;
+            }
+            
+            .reception-dashboard-container input[type="tel"].form-control,
+            .reception-dashboard-container input[type="date"].form-control {
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+            .reception-dashboard-container .radio-label,
+            .reception-dashboard-container .checkbox-label {
+                padding: 10px 20px;
+                border: 2px solid #e0e0e0;
+                border-radius: 10px;
+                display: inline-block;
+                transition: all 0.3s ease;
+                background: #f8f9fa;
+                font-weight: 500;
+            }
+            
+            .reception-dashboard-container .radio-item input[type="radio"]:checked + .radio-label,
+            .reception-dashboard-container .checkbox-item input[type="checkbox"]:checked + .checkbox-label {
+                background: linear-gradient(135deg, #4ec8e3 0%, #2ba3c8 100%);
+                color: #fff;
+                border-color: #2ba3c8;
+                transform: scale(1.05);
+            }
+
+            .reception-dashboard-container .radio-label:hover,
+            .reception-dashboard-container .checkbox-label:hover {
+                border-color: #4ec8e3;
+                transform: translateY(-2px);
+            }
+            
+            .reception-dashboard-container .submit-btn-wrapper {
+                text-align: center;
+                margin-top: 40px;
+            }
+
+            .reception-dashboard-container .btn-submit {
+                background: linear-gradient(135deg, #4ec8e3 0%, #2ba3c8 100%);
+                color: #fff;
+                border: none;
+                padding: 15px 60px;
+                font-size: 18px;
+                font-weight: 600;
+                border-radius: 50px;
+                cursor: pointer;
+                transition: all 0.4s ease;
+                box-shadow: 0 10px 30px rgba(43, 163, 200, 0.3);
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .reception-dashboard-container .btn-submit::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: rgba(255, 255, 255, 0.2);
+                transition: left 0.5s ease;
+            }
+
+            .reception-dashboard-container .btn-submit:hover::before {
+                left: 100%;
+            }
+
+            .reception-dashboard-container .btn-submit:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 15px 40px rgba(43, 163, 200, 0.5);
+            }
+
+            .reception-dashboard-container .btn-submit:active {
+                transform: translateY(-1px);
+            }
+
+            .reception-dashboard-container .btn-submit i {
+                margin-left: 10px;
+                transition: transform 0.3s ease;
+            }
+
+            .reception-dashboard-container .btn-submit:hover i {
+                transform: translateX(5px);
+            }
+
+            .reception-dashboard-container .section-divider {
+                margin: 30px 0;
+                border-top: 2px dashed #e0e0e0;
+            }
+
+            .reception-dashboard-container .col-divider {
+                position: relative;
+            }
+
+            .reception-dashboard-container .col-divider::after {
+                content: '';
+                position: absolute;
+                right: -15px;
+                top: 0;
+                bottom: 0;
+                width: 1px;
+                /* background: linear-gradient(to bottom, transparent, #e0e0e0, transparent); */
+            }
+            
+            @media (max-width: 768px) {
+                .col-divider::after {
+                    display: none;
+                }
+                
+                .page-title h1 {
+                    font-size: 32px;
+                }
+                
+                .form-card {
+                    padding: 25px;
+                }
+            }
+            
+            /* Animation for form fields on load */
+            .reception-dashboard-container .form-group {
+                animation: fadeInUp 0.5s ease forwards;
+                opacity: 0;
+            }
+
+            .reception-dashboard-container .form-group:nth-child(1) { animation-delay: 0.1s; }
+            .reception-dashboard-container .form-group:nth-child(2) { animation-delay: 0.2s; }
+            .reception-dashboard-container .form-group:nth-child(3) { animation-delay: 0.3s; }
+            .reception-dashboard-container .form-group:nth-child(4) { animation-delay: 0.4s; }
+            .reception-dashboard-container .form-group:nth-child(5) { animation-delay: 0.5s; }
+            .reception-dashboard-container .form-group:nth-child(6) { animation-delay: 0.6s; }
+
+            @keyframes fadeInUp {
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+            }
+        </style> 
+                                        <div class="reception-dashboard-container">
+                                            <div class="page-title">
+                                                <h1>
+                                                    <i class="fa fa-user-plus title-icon"></i>
+                                                    Create Patient
+                                                </h1>
+                                            </div>
+                                            
+                                            <div class="form-card">
+                                                <form id="patientForm">
+                                                    <div class="row">
+                                                        <div class="col-md-6 col-divider">
+                                                            <div class="form-group">
+                                                                <label>
+                                                                    <i class="fa fa-user"></i>
+                                                                    Patient Name
+                                                                </label>
+                                                                <div class="input-icon-wrapper">
+                                                                    <input type="text" id="patient-name" class="form-control" placeholder="Enter patient name" required="required"/>
+                                                                    <i class="fa fa-user"></i>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="form-group">
+                                                                <label>
+                                                                    <i class="fa fa-camera"></i>
+                                                                    Photo
+                                                                </label>
+                                                                <div class="input-icon-wrapper">
+                                                                    <input type="file" name="image" id="patient-img" class="form-control" accept="image/png, image/gif, image/jpeg"/>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="form-group">
+                                                                <label>
+                                                                    <i class="fa fa-phone"></i>
+                                                                    Phone Number
+                                                                </label>
+                                                                <div class="input-icon-wrapper">
+                                                                    <input type="tel" class="form-control" id="patient-phone" placeholder="Enter phone number" required="required"/>
+                                                                    <i class="fa fa-phone"></i>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="form-group">
+                                                                <label>
+                                                                    <i class="fa fa-envelope"></i>
+                                                                    Email Address
+                                                                </label>
+                                                                <div class="input-icon-wrapper">
+                                                                    <input type="email" class="form-control" id="patient-mail" placeholder="Enter email address" required="required"/>
+                                                                    <i class="fa fa-envelope"></i>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label>
+                                                                    <i class="fa fa-calendar"></i>
+                                                                    Date of Birth
+                                                                </label>
+                                                                <div class="input-icon-wrapper">
+                                                                    <input type="date" id="patient-dob" class="form-control" required="required"/>
+                                                                    <i class="fa fa-calendar"></i>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            <i class="fa fa-tint"></i>
+                                                                            Blood Group
+                                                                        </label>
+                                                                        <div class="input-icon-wrapper">
+                                                                            <select class="form-control" id="patient-bloodgroup" required="required">
+                                                                                <option value="">Select Blood Group</option>
+                                                                                <option value="a">A</option>
+                                                                                <option value="b">B</option>
+                                                                                <option value="ab">AB</option>
+                                                                                <option value="o">O</option>
+                                                                            </select>
+                                                                            <i class="fa fa-tint"></i>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            <i class="fa fa-plus-square"></i>
+                                                                            Rh Type
+                                                                        </label>
+                                                                        <div class="radio-group">
+                                                                            <div class="radio-item">
+                                                                                <input type="radio" id="rhtype-positive" class="form-check-input o_radio_input" checked="true" name="rhtype" value="+"/>
+                                                                                <label class="radio-label" for="rhtype-positive">+ve</label>
+                                                                            </div>
+                                                                            <div class="radio-item">
+                                                                                <input type="radio" id="rhtype-negative" class="form-check-input o_radio_input" name="rhtype" value="-"/>
+                                                                                <label class="radio-label" for="rhtype-negative">-ve</label>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                             
+                                                            <div class="form-group">
+                                                                <label>
+                                                                    <i class="fa fa-venus-mars"></i>
+                                                                    Gender
+                                                                </label>
+                                                                <div class="radio-group">
+                                                                    <div class="radio-item">
+                                                                        <input type="radio" checked="true" id="patient-gender-male" name="gender" value="male"/>
+                                                                        <label for="patient-gender-male" class="radio-label">
+                                                                            <i class="fa fa-mars"></i> Male
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="radio-item">
+                                                                        <input type="radio" name="gender" id="patient-gender-female" value="female"/>
+                                                                        <label for="patient-gender-female" class="radio-label">
+                                                                            <i class="fa fa-venus"></i> Female
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="radio-item">
+                                                                        <input type="radio" name="gender" id="patient-gender-other" value="other"/>
+                                                                        <label for="patient-gender-other" class="radio-label">
+                                                                            <i class="fa fa-genderless"></i> Other
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="form-group">
+                                                                <label>
+                                                                    <i class="fa fa-heart"></i>
+                                                                    Marital Status
+                                                                </label>
+                                                                <div class="input-icon-wrapper">
+                                                                    <select class="form-control" required="required" id="patient-m-status" name="status">
+                                                                        <option value="">Select Marital Status</option>
+                                                                        <option value="married">Married</option>
+                                                                        <option value="unmarried">Unmarried</option>
+                                                                        <option value="widow">Widow</option>
+                                                                        <option value="widower">Widower</option>
+                                                                        <option value="divorcee">Divorce</option>
+                                                                    </select>
+                                                                    <i class="fa fa-heart"></i>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="submit-btn-wrapper">
+                                                        <button type="button" class="btn-submit" t-on-click="savePatient">
+                                                            Save Patient
+                                                            <i class="fa fa-arrow-right"></i>
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="out-patient" t-ref="out-patient">
+                                        <div class="reception-dashboard-container">
+                                            <div class="page-title">
+                                                <h1>
+                                                    <i class="fa fa-id-card title-icon"></i>
+                                                    Create Outpatient
+                                                </h1>
+                                            </div>
+                                            <div class="form-card">
+                                                <form id="outPatientForm">
+                                                    <div class="row" id="op_table">
+                                                        <div class="col-md-6 col-divider">
+                                                            <div class="form-group">
+                                                                <label for="select_type">
+                                                                    <i class="fa fa-credit-card"></i>
+                                                                    Patient Card
+                                                                </label>
+                                                                <div class="input-icon-wrapper">
+                                                                    <select id="select_type" class="form-control select_type" name="group" t-on-click="patient_card">
+                                                                        <option value="have_card">Have Patient Card</option>
+                                                                        <option value="dont_have_card">Dont have Patient Card</option>
+                                                                    </select>
+                                                                    <i class="fa fa-credit-card"></i>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="form-group">
+                                                                <label id="patient_label" for="sl_patient">
+                                                                    <i class="fa fa-id-badge"></i>
+                                                                    Patient ID*
+                                                                </label>
+                                                                <div class="input-icon-wrapper">
+                                                                    <select type="text" id="sl_patient" class="form-control select_patient" autofocus="autofocus" placeholder="Select Out Patient" t-on-change="fetch_patient_id">
+                                                                        <t t-foreach="state.patient_lst" t-as="patient" t-key="patient.id">
+                                                                            <option t-att-value="patient.id">
+                                                                                <t t-esc="patient['name']"/>
+                                                                            </option>
+                                                                        </t>
+                                                                    </select>
+                                                                    <i class="fa fa-id-badge"></i>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="form-group">
+                                                                <label for="o_patient-name">
+                                                                    <i class="fa fa-user"></i>
+                                                                    Patient Name*
+                                                                </label>
+                                                                <div class="input-icon-wrapper">
+                                                                    <input type="text" id="o_patient-name" class="form-control" placeholder="Patient Name"/>
+                                                                    <i class="fa fa-user"></i>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="form-group">
+                                                                <label for="o_patient-phone">
+                                                                    <i class="fa fa-phone"></i>
+                                                                    Phone Number
+                                                                </label>
+                                                                <div class="input-icon-wrapper">
+                                                                    <input type="tel" id="o_patient-phone" placeholder="Phone Number" class="form-control"/>
+                                                                    <i class="fa fa-phone"></i>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="form-group">
+                                                                <label for="o_patient-dob">
+                                                                    <i class="fa fa-calendar"></i>
+                                                                    Date of Birth
+                                                                </label>
+                                                                <div class="input-icon-wrapper">
+                                                                    <input type="date" class="form-control" id="o_patient-dob" placeholder="Date of Birth"/>
+                                                                    <i class="fa fa-calendar"></i>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="form-group">
+                                                                <label for="o_patient_bloodgroup">
+                                                                    <i class="fa fa-tint"></i>
+                                                                    Blood Group
+                                                                </label>
+                                                                <div class="input-icon-wrapper">
+                                                                    <select id="o_patient_bloodgroup" class="form-control o_bloodgroup" name="group">
+                                                                        <option value="a">A</option>
+                                                                        <option value="b">B</option>
+                                                                        <option value="ab">AB</option>
+                                                                        <option value="o">O</option>
+                                                                    </select>
+                                                                    <i class="fa fa-tint"></i>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="o_patient-gender">
+                                                                    <i class="fa fa-venus-mars"></i>
+                                                                    Gender
+                                                                </label>
+                                                                <div class="radio-group">
+                                                                    <div class="radio-item">
+                                                                        <input type="radio" class="form-check-input mr-2 o_radio_input" id="o_patient-gender" checked="true" name="gender" value="male"/>
+                                                                        <label class="radio-label" for="o_patient-gender">
+                                                                            <i class="fa fa-mars"></i> Male
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="radio-item">
+                                                                        <input type="radio" class="form-check-input mr-2 o_radio_input" id="o_patient-gender" name="gender" value="female"/>
+                                                                        <label class="radio-label" for="o_patient-gender">
+                                                                            <i class="fa fa-venus"></i> Female
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="radio-item">
+                                                                        <input type="radio" class="form-check-input mr-3 o_radio_input" id="o_patient-gender" name="gender" value="other"/>
+                                                                        <label class="radio-label" for="o_patient-gender">
+                                                                            <i class="fa fa-genderless"></i> Other
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="form-group">
+                                                                <label for="op_date">
+                                                                    <i class="fa fa-calendar-check-o"></i>
+                                                                    OP Date*
+                                                                </label>
+                                                                <div class="input-icon-wrapper">
+                                                                    <input type="date" class="form-control" required="1" id="op_date" placeholder="OP Date"/>
+                                                                    <i class="fa fa-calendar-check-o"></i>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="form-group">
+                                                                <label for="reason">
+                                                                    <i class="fa fa-stethoscope"></i>
+                                                                    Reason
+                                                                </label>
+                                                                <div class="input-icon-wrapper">
+                                                                    <input type="text" id="reason" class="form-control reason" name="group" placeholder="Reason for visit"/>
+                                                                    <i class="fa fa-stethoscope"></i>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="form-group">
+                                                                <label for="slot">
+                                                                    <i class="fa fa-ticket"></i>
+                                                                    Slot
+                                                                </label>
+                                                                <div class="input-icon-wrapper">
+                                                                    <input type="text" id="slot" class="form-control slot" name="group" placeholder="Slot / Ticket No."/>
+                                                                    <i class="fa fa-ticket"></i>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="form-group">
+                                                                <label for="sl_dr">
+                                                                    <i class="fa fa-user-md"></i>
+                                                                    Doctor Name
+                                                                </label>
+                                                                <div class="input-icon-wrapper">
+                                                                    <select id="sl_dr" class="form-control select_dr" name="group"></select>
+                                                                    <i class="fa fa-user-md"></i>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="submit-btn-wrapper">
+                                                        <button type="button" class="btn-submit save_out_patient" t-on-click="save_out_patient_data">
+                                                            Save Outpatient
+                                                            <i class="fa fa-arrow-right"></i>
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="inpatient" t-ref="inpatient">
+                                        <div class="reception-dashboard-container">
+                                            <div class="page-title">
+                                                <h1>
+                                                    <i class="fa fa-hospital-o title-icon"></i>
+                                                    Create Inpatient
+                                                </h1>
+                                            </div>
+                                            <div class="form-card">
+                                                <form id="inPatientForm">
+                                                    <div class="row">
+                                                        <div class="col-md-6 col-divider">
+                                                            <div class="form-group">
+                                                                <label for="sl_patient_id">
+                                                                    <i class="fa fa-id-badge"></i>
+                                                                    Patient ID*
+                                                                </label>
+                                                                <div class="input-icon-wrapper">
+                                                                    <select id="sl_patient_id" class="form-control select_patient_id" name="group"/>
+                                                                    <i class="fa fa-id-badge"></i>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="form-group">
+                                                                <label for="reason_of_admission">
+                                                                    <i class="fa fa-stethoscope"></i>
+                                                                    Reason of Admission
+                                                                </label>
+                                                                <div class="input-icon-wrapper">
+                                                                    <input type="text" class="form-control reason_of_admission" id="reason_of_admission" placeholder="Reason of Admission"/>
+                                                                    <i class="fa fa-stethoscope"></i>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="admission_type">
+                                                                    <i class="fa fa-ambulance"></i>
+                                                                    Admission Type
+                                                                </label>
+                                                                <div class="input-icon-wrapper">
+                                                                    <select id="admission_type" class="form-control admission_type" name="group">
+                                                                        <option value="emergency">Emergency Admission</option>
+                                                                        <option value="routine">Routine Admission</option>
+                                                                    </select>
+                                                                    <i class="fa fa-ambulance"></i>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="form-group">
+                                                                <label for="attending_doctor_id">
+                                                                    <i class="fa fa-user-md"></i>
+                                                                    Attending Doctor*
+                                                                </label>
+                                                                <div class="input-icon-wrapper">
+                                                                    <select id="attending_doctor_id" class="form-control attending_doctor_id" name="group"></select>
+                                                                    <i class="fa fa-user-md"></i>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="submit-btn-wrapper">
+                                                        <button type="button" class="btn-submit save_in_patient" t-on-click="save_in_patient_data">
+                                                            Save Inpatient
+                                                            <i class="fa fa-arrow-right"></i>
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="room-ward" t-ref="room_ward" style="display:flex;">
+                                        <div class="col">
+                                            <div id="room" class="col-md-4 r_dashButton o_room_button" t-on-click="fetchRoom">
+                                                <img src="https://static.thenounproject.com/png/1183390-200.png" width="80px" class="apnmnt_img"/>
+                                                <p>Rooms</p>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div id="ward" class="col-md-4 r_dashButton o_ward_button" t-on-click="fetchWard">
+                                                <img src="https://cdn-icons-png.flaticon.com/512/1069/1069152.png" width="80px" class="apnmnt_img"/>
+                                                <p>Wards</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="ward" t-ref="ward">
+                                        <style>
+                                            .table-card {
+                                                background: #fff;
+                                                border-radius: 20px;
+                                                padding: 30px;
+                                                box-shadow: 0 10px 35px rgba(0,0,0,0.08);
+                                                animation: slideUp 0.6s ease;
+                                            }
+                                            .table-card .table thead th {
+                                                background: linear-gradient(135deg, #4ec8e3 0%, #2ba3c8 100%);
+                                                color: #fff;
+                                                border: none;
+                                                font-weight: 700;
+                                                font-size: 14px;
+                                            }
+                                            .table-card .table tbody tr {
+                                                transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.3s ease;
+                                            }
+                                            .table-card .table tbody tr:hover {
+                                                background: #f1fbff;
+                                                transform: translateY(-2px);
+                                                box-shadow: 0 4px 15px rgba(43,163,200,0.15);
+                                            }
+                                            .table-card .table td, .table-card .table th {
+                                                vertical-align: middle;
+                                            }
+                                        </style>
+                                        <div class="reception-dashboard-container">
+                                            <div class="page-title">
+                                                <h1>
+                                                    <i class="fa fa-bed title-icon"></i>
+                                                    Ward Overview
+                                                </h1>
+                                            </div>
+                                            <div class="table-card">
+                                                <div class="table-responsive">
+                                                    <table class="table table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="text-center">Ward Name</th>
+                                                                <th class="text-center">Block Name</th>
+                                                                <th class="text-center">Floor No.</th>
+                                                                <th class="text-center">No. of Beds Available</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="record_list_ward">
+                                                            <t t-foreach="state.ward_data" t-as="ward_data" t-key="ward_data.id">
+                                                                <tr>
+                                                                    <td class="text-center"><t t-esc="ward_data.display_name"/> </td>
+                                                                    <td class="text-center"><t t-esc="ward_data.building_id[1]"/> </td>
+                                                                    <td class="text-center"><t t-esc="ward_data.floor_no"/> </td>
+                                                                    <td class="text-center"><t t-esc="ward_data.bed_count"/> </td>
+                                                                </tr>
+                                                            </t>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="room" t-ref="room">
+                                        <div class="reception-dashboard-container">
+                                            <div class="page-title">
+                                                <h1>
+                                                    <i class="fa fa-hotel title-icon"></i>
+                                                    Room Overview
+                                                </h1>
+                                            </div>
+                                            <div class="table-card">
+                                                <div class="table-responsive">
+                                                    <table class="table table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="text-center">Room No.</th>
+                                                                <th class="text-center">Bed Type</th>
+                                                                <th class="text-center">Rent</th>
+                                                                <th class="text-center">Status</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="record_list_room">
+                                                             <t t-foreach="state.room_data" t-as="room_data" t-key="room_data.id">
+                                                                <tr>
+                                                                    <td class="text-center"><t t-esc="room_data.display_name"/> </td>
+                                                                    <td class="text-center"><t t-esc="room_data.bed_type"/> </td>
+                                                                    <td class="text-center"><t t-esc="room_data.rent"/> </td>
+                                                                    <td class="text-center"><t t-esc="room_data.state"/> </td>
+                                                                </tr>
+                                                            </t>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-4">
+                            <div id="view_secondary" class="col">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>
