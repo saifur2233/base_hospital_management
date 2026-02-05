@@ -412,7 +412,7 @@
                                                        
         <div class="oh_dashboards" t-ref="root">
             <div class="top-bar">
-                <h1><i class="fas fa-chart-line"></i> Dashboard</h1>
+                <h1><i class="fas fa-chart-line"></i> Pharmacy Dashboard</h1>
                 <button class="month-btn">
                     <i class="fas fa-calendar"></i> January 2025
                 </button>
