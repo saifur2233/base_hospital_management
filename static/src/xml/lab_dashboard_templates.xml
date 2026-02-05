@@ -91,6 +91,10 @@
                 opacity: 0.5;
             }
 
+            .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+                color: #FFFFFF;
+                background-color: #2ba3c8 !important;
+            }
         </style>
         <div class="oh_dashboards lab_dash" t-ref="root">
             <div class="container-fluid o_pj_dashboard">
@@ -127,10 +131,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="row p-5">
+                <div class="row lg:p-5 sm:p-2">
                     <div class="col-md-12 bg-white p-3 mb-3 rounded shadow-sm">
                         <!-- Tabs -->
-                        <ul class="nav nav-tabs" id="labTab" role="tablist">
+                        <ul class="nav nav-tabs nav-pills" id="labTab" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link active"
                                         id="test-confirm-tab"

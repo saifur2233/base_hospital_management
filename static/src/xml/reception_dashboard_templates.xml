@@ -416,7 +416,7 @@
             }
 
             .main-content {
-                margin-left: 200;
+                margin-left: 0;
             }
 
             .greeting h2 {
@@ -454,7 +454,7 @@
                     <button class="sidebar-toggle" t-on-click="toggleSidebar">
                         <i class="fa fa-bars"></i>
                     </button>
-                    <h1><i class="fas fa-chart-line"></i> Pharmacy Dashboard</h1>
+                    <h1><i class="fas fa-chart-line"></i> Reception Dashboard</h1>
                 </div>
                 <button class="month-btn">
                     <i class="fas fa-calendar"></i> January 2025
@@ -802,6 +802,10 @@
             }
             
             @media (max-width: 768px) {
+                .reception-dashboard-container .row{
+                    padding: 15px !important;
+                }
+
                 .col-divider::after {
                     display: none;
                 }
@@ -810,8 +814,18 @@
                     font-size: 32px;
                 }
                 
+                .main-content {
+                    padding: 0px !important;
+                }
+
                 .form-card {
-                    padding: 25px;
+                    padding: 0px !important;
+                    background: none !important;
+                }
+
+                .chart-card {
+                    padding: 0px !important;
+                    
                 }
             }
             
