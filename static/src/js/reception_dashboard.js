@@ -1,41 +1,39 @@
 /** @odoo-module */
 import { registry} from '@web/core/registry';
 import { useService } from "@web/core/utils/hooks";
-import { Component, onMounted, useState, useRef } from "@odoo/owl";
+import { Component, onMounted, useState } from "@odoo/owl";
 import { _t } from "@web/core/l10n/translation";
 
 class ReceptionDashBoard extends Component{
     setup() {
-        this.ref = useRef('root');
-        this.patient_creation = useRef('patient_creation');
-        this.inpatient = useRef('inpatient');
-        this.out_patient = useRef('out-patient');
-        this.rd_buttons = useRef('rd_buttons');
-        this.room_ward = useRef('room_ward');
-        this.ward = useRef('ward');
-        this.room = useRef('room');
+        const isMobile = typeof window !== "undefined" && window.matchMedia("(max-width: 768px)").matches;
         this.action = useService('action');
         this.orm = useService("orm");
         this.state = useState({
+            menu: 'home',
             patient_lst : [],
             ward_data : [],
             room_data : [],
+            sidebarOpen: !isMobile,
+            isMobile,
             });
         onMounted(async () => {
                 await this.createPatient();
         });
     }
+//  Toggle sidebar (used on mobile)
+    toggleSidebar(){
+        this.state.sidebarOpen = !this.state.sidebarOpen;
+    }
+//  Show home section
+    showHome(){
+        this.state.menu = 'home';
+        this.state.sidebarOpen = false;
+    }
 //  Method for creating patient
     createPatient(){
-        if ($('.r_active')[0]){$('.r_active')[0].classList.remove('r_active');}
-        $('.o_patient_button')[0].classList.add('r_active');
-        this.room_ward.el.classList.add("d-none")
-        this.patient_creation.el.classList.remove("d-none");
-        this.out_patient.el.classList.add("d-none");
-        this.inpatient.el.classList.add("d-none");
-        this.rd_buttons.el.classList.add("d-none");
-        this.ward.el.classList.add("d-none");
-        this.room.el.classList.add("d-none");
+        this.state.menu = 'create_patient';
+        this.state.sidebarOpen = false;
     }
 //  Method for creating patient
     async savePatient (){
@@ -77,15 +75,8 @@ class ReceptionDashBoard extends Component{
     }
 //  Method on clicking  appointment button
     fetchAppointmentData (){
-        if ($('.r_active')[0]){$('.r_active')[0].classList.remove('r_active');}
-        $('.o_appointment_button')[0].classList.add('r_active');
-        this.room_ward.el.classList.add("d-none")
-        this.patient_creation.el.classList.add("d-none");
-        this.out_patient.el.classList.remove("d-none");
-        this.inpatient.el.classList.add("d-none");
-        this.rd_buttons.el.classList.remove("d-none");
-        this.ward.el.classList.add("d-none");
-        this.room.el.classList.add("d-none");
+        this.state.menu = 'outpatient_appointment';
+        this.state.sidebarOpen = false;
         this.createOutPatient();//the outpatient creation page will be shown by default
     }
 //  Creates new outpatient
@@ -119,12 +110,8 @@ class ReceptionDashBoard extends Component{
 //  Method for creating inpatient
     async createInPatient (){
         var self = this
-        this.room_ward.el.classList.add("d-none")
-        this.patient_creation.el.classList.add("d-none");
-        this.out_patient.el.classList.add("d-none");
-        this.inpatient.el.classList.remove("d-none");
-        this.ward.el.classList.add("d-none");
-        this.room.el.classList.add("d-none");
+        this.state.menu = 'inpatient_appointment';
+        this.state.sidebarOpen = false;
         var domain = [['job_id.name', '=', 'Doctor']];
         await this.orm.call('res.partner','fetch_patient_data',[]).then(function (result){
         self.patient_id_lst=result
@@ -266,32 +253,17 @@ class ReceptionDashBoard extends Component{
         });
         }
     }
-//  Method for getting room or ward details
-    fetchRoomWard (){
-        $('#view_secondary').html('');
-        this.room_ward.el.classList.remove("d-none")
-        this.patient_creation.el.classList.add("d-none");
-        this.out_patient.el.classList.add("d-none");
-        this.inpatient.el.classList.add("d-none");
-        this.rd_buttons.el.classList.add("d-none");
-        if ($('.r_active')[0]){$('.r_active')[0].classList.remove('r_active');}
-        $('.o_room_ward_button')[0].classList.add('r_active');
-    }
 //  Method for getting ward details
     async fetchWard (){
-        this.ward.el.classList.remove("d-none");
-        this.room.el.classList.add("d-none");
-        if ($('.r_active2')[0]){$('.r_active2')[0].classList.remove('r_active2');}
-        $('.o_ward_button')[0].classList.add('r_active2');
+        this.state.menu = 'wards';
+        this.state.sidebarOpen = false;
         var result = await this.orm.call('hospital.ward','search_read',)
         this.state.ward_data = result
     }
 //  Method for getting room details
     async fetchRoom (){
-        this.room.el.classList.remove("d-none");
-        this.ward.el.classList.add("d-none");
-        if ($('.r_active2')[0]){$('.r_active2')[0].classList.remove('r_active2');}
-        $('.o_room_button')[0].classList.add('r_active2');
+        this.state.menu = 'rooms';
+        this.state.sidebarOpen = false;
         var result= await this.orm.call('patient.room','search_read',)
         this.state.room_data = result
     }

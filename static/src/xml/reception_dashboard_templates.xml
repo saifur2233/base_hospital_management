@@ -1,60 +1,494 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<!--Reception dashboard template-->
-<templates id="reception_dashboard" xml:space="preserve">
-    <t t-name="ReceptionDashboard" owl="1">
-        
-        <div class="oh_dashboards" style="overflow: scroll;height: 100%;"
-             t-ref="root">
-            <div class="container-fluid o_pj_dashboard">
-                <div style="width:100%; margin:0; padding:0;">
+<!-- Reception dashboard template -->
+<template>
+    <t t-name="ReceptionDashboard">
+    <style>
+        :root {
+            --primary: #1a5f7a;
+            --accent: #2ba3c8;
+            --light-accent: #4ec8e3;
+            --dark: #0f3a4a;
+            --light-bg: #f5f7fa;
+            --white: #ffffff;
+            --text-dark: #2c3e50;
+            --border-color: #e0e6ed;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-dark);
+        }
+
+        .o_action_manager{
+            <!-- height: 100vh; -->
+            overflow: hidden !important;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            background: linear-gradient(135deg, var(--light-accent) 0%, var(--primary) 100%);
+            padding: 20px 30px;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top-bar h1 {
+            color: white;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .month-btn {
+            background-color: var(--dark);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .month-btn:hover {
+            background-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background-color: var(--white);
+            border-right: 1px solid var(--border-color);
+            padding: 30px 0;
+            min-height: calc(100vh - 80px);
+            position: fixed;
+            left: 0;
+            width: 280px;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+            z-index: 1100;
+        }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
+
+        .sidebar-item {
+            padding: 15px 25px;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: bold;
+            border-left: 4px solid transparent;
+            position: relative;
+        }
+
+        .sidebar-item i {
+            width: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-item:hover {
+            background-color: var(--light-bg);
+            border-left-color: var(--accent);
+            padding-left: 35px;
+            color: var(--accent);
+        }
+
+        .sidebar-item.active {
+            background-color: var(--light-bg);
+            border-left-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            margin-top: 0px !important;
+            padding: 30px;
+            height: calc(100vh - 80px); /* Set explicit height */
+            overflow-y: auto; /* Enable vertical scrolling */
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            transition: margin-left 0.3s ease;
+        }
+
+        .greeting {
+            margin-bottom: 30px;
+            animation: slideInDown 0.6s ease;
+        }
+
+        .greeting h2 {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+
+        .greeting p {
+            color: #7f8c8d;
+            font-size: 15px;
+        }
+
+        /* Card Styles */
+        .stat-card {
+            background: linear-gradient(135deg, var(--light-accent) 0%, var(--accent) 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(43, 163, 200, 0.2);
+            animation: fadeInUp 0.6s ease backwards;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+        .stat-card:nth-child(5) { animation-delay: 0.5s; }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transition: all 0.6s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(43, 163, 200, 0.3);
+        }
+
+        .stat-card:hover::before {
+            top: -25%;
+            right: -25%;
+        }
+
+        .stat-card-label {
+            font-size: 20px;
+            font-weight: 600;
+            opacity: 0.95;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-card-value {
+            font-size: 28px;
+            font-weight: 700;
+            margin-top: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-card-icon {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 32px;
+            opacity: 0.3;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover .stat-card-icon {
+            transform: rotate(20deg) scale(1.1);
+            opacity: 0.5;
+        }
+
+        /* Chart Cards */
+        .chart-card {
+            <!-- background: white; -->
+            border-radius: 12px;
+            padding: 25px;
+            <!-- box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08); -->
+            margin-bottom: 30px;
+            animation: fadeInUp 0.6s ease backwards;
+            transition: all 0.3s ease;
+        }
+
+        .chart-card:nth-child(6) { animation-delay: 0.6s; }
+        .chart-card:nth-child(7) { animation-delay: 0.7s; }
+
+        .chart-card:hover {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+            transform: translateY(-5px);
+        }
+
+        .chart-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chart-title i {
+            color: var(--accent);
+            font-size: 18px;
+        }
+
+        /* Summary Cards */
+        .summary-card {
+            background: linear-gradient(135deg, var(--primary) 0%, #0d4a5f 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: fadeInUp 0.6s ease backwards;
+            box-shadow: 0 5px 15px rgba(26, 95, 122, 0.2);
+        }
+
+        .summary-card:nth-child(1) { animation-delay: 0.8s; }
+        .summary-card:nth-child(2) { animation-delay: 0.85s; }
+        .summary-card:nth-child(3) { animation-delay: 0.9s; }
+        .summary-card:nth-child(4) { animation-delay: 0.95s; }
+
+        .summary-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 35px rgba(26, 95, 122, 0.3);
+        }
+
+        .summary-card-label {
+            font-size: 12px;
+            font-weight: 600;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .summary-card-value {
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        /* Performance Metrics */
+        .perf-metrics {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.6s ease backwards;
+            animation-delay: 0.2s;
+        }
+
+        .metric {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            flex: 1;
+            min-width: 200px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .metric:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .metric-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: #7f8c8d;
+            font-weight: 600;
+        }
+
+        /* Animations */
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Legend Styles */
+        .legend {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .sidebar-toggle {
+            display: none;
+            background: var(--dark);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-right: 12px;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.35);
+            z-index: 1050;
+        }
+
+        .sidebar-overlay.show {
+            display: block;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 250px;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .sidebar-toggle {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+            }
+
+            .main-content {
+                margin-left: 200;
+            }
+
+            .greeting h2 {
+                font-size: 24px;
+            }
+
+            .stat-card-value {
+                font-size: 22px;
+            }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--light-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+    </style>
                     
-                    <div class="row">
-                        <div class="col-12 r_dashButtonContainer">
-                            <div id="patient"
-                                 class="col-md-4 r_dashButton o_patient_button"
-                                 t-on-click="createPatient">
-                                <img src="https://cdn-icons-png.flaticon.com/512/1512/1512910.png"
-                                     width="65px" class="patient_img"/>
-                                <p>Patient</p>
-                            </div>
-                            <div id="appointment"
-                                 class="col-md-4 r_dashButton o_appointment_button"
-                                    t-on-click="fetchAppointmentData">
-                                <img src="https://cdn-icons-png.flaticon.com/512/1069/1069152.png"
-                                     width="65px" class="apnmnt_img"/>
-                                <p>Appointment</p>
-                            </div>
-                            <div id="rw"
-                                 class="col-md-4 r_dashButton o_room_ward_button" t-on-click="fetchRoomWard">
-                                <img src="https://cdn-icons-png.flaticon.com/512/2184/2184890.png"
-                                     width="65px" class="room_ward_img"/>
-                                <p>Room/Ward</p>
-                            </div>
-                        </div>
-                        <div id="view_main" class="col-md-6 col-sm-6">
-                            <div id="buttons" class="row r_AppntBtn">
-                                <div class="row rd_buttons" t-ref="rd_buttons">
-                                    <div class="col-lg-6 col-md-6">
-                                        <div id="outpatient" class="col-md-4 r_dashButton o_outpatient_button"
-                                        t-on-click="fetchAppointmentData">
-                                            <img src="base_hospital_management/static/src/img/out_p.png" width="80px" class="out_p_image"/>
-                                            <p>Outpatient</p>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6 col-md-6">
-                                        <div id="inpatient" class="col-md-4 r_dashButton o_inpatient_button" t-on-click="createInPatient">
-                                            <img src="base_hospital_management/static/src/img/in_p.png" width="80px" class="in_p_img"/>
-                                            <p>Inpatient</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="controls" class="row r_controls"/>
-                                <div id="content" class="col r_Container container">
-                                    <div class="row r_Profile" t-ref="patient_creation">
-                                        <style>
+                                                       
+        <div class="oh_dashboards" t-ref="root">
+            <div class="top-bar">
+                <div class="d-flex align-items-center">
+                    <button class="sidebar-toggle" t-on-click="toggleSidebar">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <h1><i class="fas fa-chart-line"></i> Pharmacy Dashboard</h1>
+                </div>
+                <button class="month-btn">
+                    <i class="fas fa-calendar"></i> January 2025
+                </button>
+            </div>
+            <div class="d-flex" style="height: calc(100vh - 80px); overflow: hidden;">
+                <!-- Sidebar -->
+                <div t-att-class="'sidebar' + (state.sidebarOpen ? ' open' : '')">
+                    <div t-att-class="'sidebar-item' + (state.menu === 'home' ? ' active' : '')" t-on-click="showHome">
+                        <i class="fa fa-home"></i> Home
+                    </div>
+                    <div t-att-class="'sidebar-item' + (state.menu === 'create_patient' ? ' active' : '')" t-on-click="createPatient">
+                        <i class="fa fa-user-plus"></i> Patients
+                    </div>
+                    <div t-att-class="'sidebar-item' + (state.menu === 'outpatient_appointment' ? ' active' : '')" t-on-click="fetchAppointmentData">
+                        <i class="fa fa-calendar-check-o"></i> OutPatient Appointment
+                    </div>
+                    <div t-att-class="'sidebar-item' + (state.menu === 'inpatient_appointment' ? ' active' : '')" t-on-click="createInPatient">
+                        <i class="fa fa-calendar-check-o"></i> Inpatient Appointment
+                    </div>
+
+                    <div t-att-class="'sidebar-item' + (state.menu === 'wards' ? ' active' : '')"  t-on-click="fetchWard">
+                        <i class="fa fa-hospital-o"></i> Wards
+                    </div>
+                    <div t-att-class="'sidebar-item' + (state.menu === 'rooms' ? ' active' : '')" t-on-click="fetchRoom">
+                        <i class="fa fa-bed"></i> Rooms
+                    </div>
+                </div>
+                <t t-if="state.isMobile">
+                    <div t-att-class="'sidebar-overlay' + (state.sidebarOpen ? ' show' : '')" t-on-click="toggleSidebar"></div>
+                </t>
+        <style>
             .reception-dashboard-container {
-                max-width: 1000px;
+                max-width: 100%;
                 margin: 0 auto;
                 padding: 0 20px;
             }
@@ -405,15 +839,89 @@
                 }
             }
         </style> 
-                                        <div class="reception-dashboard-container">
-                                            <div class="page-title">
-                                                <h1>
-                                                    <i class="fa fa-user-plus title-icon"></i>
-                                                    Create Patient
-                                                </h1>
+                <!-- Main Content -->
+                <div class="main-content flex-grow-1 ">
+                    <!-- <div class="greeting">
+                        <h2>Good Morning, Receptionist!</h2>
+                        <p>Today is <span id="current-date"></span></p>
+                    </div> -->
+                    <div class="row reception-dashboard-container">
+                        <div class="col-lg-12">
+                            <div t-ref="home_content" class="content-section" t-attf-class="content-section{{ state.menu === 'home' ? '' : ' d-none' }}">
+                                <div class="">
+                                    <div class="row d-flex justify-content-center g-4 p-5">
+                                       
+                                        <div class="col-lg-4 col-md-6 col-sm-12">
+                                            <div class="stat-card">
+                                                <div class="stat-card-icon"><i class="fa fa-user-plus"></i></div>
+                                                <div class="stat-card-label">Patient</div>
+                                                <div class="stat-card-value">
+                                                    <span class="stat-card-value-text">
+                                                        0
+                                                    </span>
+                                                </div>
                                             </div>
-                                            
-                                            <div class="form-card">
+                                        </div>
+                                        <div class="col-lg-4 col-md-6 col-sm-12">
+                                            <div class="stat-card">
+                                                <div class="stat-card-icon"><i class="fa fa-calendar"></i></div>
+                                                <div class="stat-card-label">Inpatient</div>
+                                                <div class="stat-card-value">
+                                                    <span class="stat-card-value-text">
+                                                        0
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-6 col-sm-12">
+                                            <div class="stat-card">
+                                                <div class="stat-card-icon"><i class="fa fa-calendar"></i></div>
+                                                <div class="stat-card-label">OutPatient</div>
+                                                <div class="stat-card-value">
+                                                    <span class="stat-card-value-text">
+                                                        0
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-6 col-sm-12">
+                                            <div class="stat-card">
+                                                <div class="stat-card-icon"><i class="fa fa-hospital-o"></i></div>
+                                                <div class="stat-card-label" >Wards</div>
+                                                <div class="stat-card-value">
+                                                    <span class="stat-card-value-text">
+                                                        0
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-4 col-md-6 col-sm-12">
+                                            <div class="stat-card">
+                                                <div class="stat-card-icon"><i class="fa fa-bed"></i></div>
+                                                <div class="stat-card-label" >Rooms</div>
+                                                <div class="stat-card-value">
+                                                    <span class="stat-card-value-text">
+                                                        0
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+
+                            <div t-ref="patient_creation" class="content-section out-patient" t-attf-class="content-section{{ state.menu === 'create_patient' ? '' : ' d-none' }}">
+                                <div class="chart-card">
+                                    <div class="page-title">
+                                        <h1>
+                                        <i class="fa fa-user-plus title-icon"></i>
+                                        Create Patient
+                                        </h1>
+                                    </div>
+
+                                    <div class="form-card">
                                                 <form id="patientForm">
                                                     <div class="row">
                                                         <div class="col-md-6 col-divider">
@@ -567,11 +1075,12 @@
                                                     </div>
                                                 </form>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="out-patient" t-ref="out-patient">
-                                        <div class="reception-dashboard-container">
-                                            <div class="page-title">
+                                </div>
+                            </div>
+
+                            <div t-ref="out-patient" class="content-section in-patient" t-attf-class="content-section{{ state.menu === 'outpatient_appointment' ? '' : ' d-none' }}">
+                                <div class="chart-card">
+                                    <div class="page-title">
                                                 <h1>
                                                     <i class="fa fa-id-card title-icon"></i>
                                                     Create Outpatient
@@ -742,11 +1251,12 @@
                                                     </div>
                                                 </form>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="inpatient" t-ref="inpatient">
-                                        <div class="reception-dashboard-container">
-                                            <div class="page-title">
+                                </div>
+                            </div>
+
+                            <div t-ref="inpatient" class="content-section" t-attf-class="content-section{{ state.menu === 'inpatient_appointment' ? '' : ' d-none' }}">
+                                <div class="chart-card">
+                                    <div class="page-title">
                                                 <h1>
                                                     <i class="fa fa-hospital-o title-icon"></i>
                                                     Create Inpatient
@@ -813,25 +1323,19 @@
                                                     </div>
                                                 </form>
                                             </div>
-                                        </div>
+                                </div>
+                            </div>
+
+                            <div t-ref="ward" class="content-section" t-attf-class="content-section{{ state.menu === 'wards' ? '' : ' d-none' }}">
+                                <div class="chart-card">
+                                    <div class="page-title">
+                                                <h1>
+                                                    <i class="fa fa-hospital-o title-icon"></i>
+                                                   Wards
+                                                </h1>
                                     </div>
 
-                                    <div class="room-ward" t-ref="room_ward" style="display:flex;">
-                                        <div class="col">
-                                            <div id="room" class="col-md-4 r_dashButton o_room_button" t-on-click="fetchRoom">
-                                                <img src="https://static.thenounproject.com/png/1183390-200.png" width="80px" class="apnmnt_img"/>
-                                                <p>Rooms</p>
-                                            </div>
-                                        </div>
-                                        <div class="col">
-                                            <div id="ward" class="col-md-4 r_dashButton o_ward_button" t-on-click="fetchWard">
-                                                <img src="https://cdn-icons-png.flaticon.com/512/1069/1069152.png" width="80px" class="apnmnt_img"/>
-                                                <p>Wards</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="ward" t-ref="ward">
-                                        <style>
+                                    <style>
                                             .table-card {
                                                 background: #fff;
                                                 border-radius: 20px;
@@ -890,13 +1394,18 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="room" t-ref="room">
+                                         
+                                </div>
+                            </div>
+
+                            <div t-ref="room" class="content-section" t-attf-class="content-section{{ state.menu === 'rooms' ? '' : ' d-none' }}">
+                                <div class="chart-card">
+                   
                                         <div class="reception-dashboard-container">
                                             <div class="page-title">
                                                 <h1>
-                                                    <i class="fa fa-hotel title-icon"></i>
-                                                    Room Overview
+                                                    <i class="fa fa-bed title-icon"></i>
+                                                    Room
                                                 </h1>
                                             </div>
                                             <div class="table-card">
@@ -924,16 +1433,14 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                         
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-4 col-sm-4">
-                            <div id="view_secondary" class="col">
-                            </div>
-                        </div>
+                        
                     </div>
                 </div>
             </div>
         </div>
     </t>
-</templates>
+</template>
